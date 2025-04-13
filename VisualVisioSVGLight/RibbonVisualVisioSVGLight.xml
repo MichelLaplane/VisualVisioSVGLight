@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI onLoad="Ribbon_Load" xmlns="http://schemas.microsoft.com/office/2009/07/customui" >
+  <ribbon>
+    <tabs>
+      <tab id="tabVisualVisioSVGLight" label="VisualVisioSVGLight">
+        <group id="grpTool" label="Tools" getImage="GetImage">
+          <button id="btnSVGForm" onAction="OnAction" label="Convert SVG File" getImage="GetImage"  getEnabled="GetEnabled"/>
+        </group>        
+        <group id="grpProject" label="Help">
+          <button id="btnAbout" imageMso="AnimationAudio" onAction="OnAction" label="About..." size="normal" />
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+  <backstage>
+    <tab id="tabBackStageVisualVisioSVGLight" firstColumnMaxWidth="450" columnWidthPercent="80" insertBeforeMso="FileExit" label="VisualVisioSVGLight" getVisible="GetVisible"  getEnabled="GetEnabled">
+      <firstColumn>
+        <taskFormGroup id="projectGroup" allowedTaskSizes="medium">
+          <category id="catFile" label="Projects" >
+            <task id="taskCatFiles" label="VisualVisioSVGLight Files"
+              description="Creation,Opening and saving of projects" getImage="GetImage" >
+              <group id="regularGroup" label="Projet" helperText="Provide project management">
+                <topItems>
+                  <layoutContainer id="layoutNew" layoutChildren="horizontal"  expand="vertical"  align="topLeft">
+                    <button id="btnProjectNew" style="large" label="New" onAction="OnAction" getImage="GetImage"
+                        isDefinitive="false"
+                        screentip="Click to create a new project"/>
+                  </layoutContainer>
+                  <layoutContainer id="layoutOpen" layoutChildren="horizontal"  expand="vertical"  align="topLeft">
+                    <button id="btnProjectOpen" style="large" label="Open" onAction="OnAction" getImage="GetImage"
+                        isDefinitive="false"
+                        screentip="Click to open a project"/>
+                  </layoutContainer>
+                  <layoutContainer id="layoutSave" layoutChildren="horizontal"  expand="vertical"  align="topLeft">
+                    <button id="btnProjectSave" style="large" label="Save" onAction="OnAction" getImage="GetImage"
+                        isDefinitive="false"
+                        screentip="Click to save the project"/>
+                  </layoutContainer>
+                  <layoutContainer id="layoutSaveAs" layoutChildren="horizontal"  expand="vertical"  align="topLeft">
+                    <button id="btnProjectSaveAs" style="large" label="Save as..." onAction="OnAction" getImage="GetImage"
+                        isDefinitive="false"
+                        screentip="Click to save the project with another name"/>
+                  </layoutContainer>
+                  <layoutContainer id="layoutClose" layoutChildren="horizontal"  expand="vertical"  align="topLeft">
+                    <button id="btnProjectClose" style="large" label="Close" onAction="OnAction" getImage="GetImage"
+                        isDefinitive="false"
+                        screentip="Click to close the project"/>
+                  </layoutContainer>
+                  <layoutContainer id="layoutDelete" layoutChildren="horizontal"  expand="vertical"  align="topLeft">
+                    <button id="btnProjectDelete" style="large" label="Delete" onAction="OnAction" getImage="GetImage"
+                        isDefinitive="false"
+                        screentip="Click to delete the project"/>
+                  </layoutContainer>
+                </topItems>
+              </group>
+            </task>
+          </category>
+          <category id="catOptions" label="Settings">
+            <task id="taskCatOptions" label="Settings"
+              description="Select the settings of the application" getImage="GetImage">
+              <group id="grpTaskCatOptionsApplication" label="Settings" helperText="Provide access to the settings of the application">
+                <topItems>
+                  <layoutContainer id="layoutGrpTaskCatOptionsApplication" layoutChildren="horizontal"  expand="vertical"  align="topLeft">
+                    <button id="btnBackStageOptionsApplication" style="large"
+                        label="Application settings" onAction="OnAction" getImage="GetImage"
+                    isDefinitive="false"
+                    screentip="Click to select the application settings"/>
+                  </layoutContainer>
+                </topItems>
+              </group>
+            </task>
+          </category>
+        </taskFormGroup>
+      </firstColumn>
+      <secondColumn>
+        <group id="grpLicense" label="Product" helperText="Michel LAPLANE">
+          <topItems>
+            <layoutContainer id="layoutLicense" layoutChildren="vertical">
+              <labelControl id="labelLicenseInfo" getLabel="GetLabel" />
+            </layoutContainer>
+          </topItems>
+        </group>
+        <group id="grpAbout" label="About VisualVisioSVGLight" helperText="Application VisualVisioSVGLight">
+          <topItems>
+            <layoutContainer id="layoutAbout" layoutChildren="vertical">
+              <labelControl id="labelBuildInfo" getLabel="GetLabel" />
+              <!--do not use label="" if using getLabel callback-->
+            </layoutContainer>
+          </topItems>
+        </group>
+      </secondColumn>
+    </tab>
+  </backstage>
+</customUI>
