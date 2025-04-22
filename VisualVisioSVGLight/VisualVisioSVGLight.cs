@@ -163,6 +163,24 @@ namespace VisualVisioSVGLight
       frmSVG.Show();
       }
 
+    public void Options()
+      {
+      DlgOptions dlgOptions;
+
+      dlgOptions = new DlgOptions();
+      if (dlgOptions.ShowDialog() == DialogResult.OK)
+        {
+        strStencilPath = dlgOptions.StencilPath;
+        strTemplatePath = dlgOptions.TemplatePath;
+        strProjectPath = dlgOptions.ProjectPath;
+        Configuration configurationFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        configurationFile.AppSettings.Settings["StencilsPath"].Value = dlgOptions.StencilPath;
+        configurationFile.AppSettings.Settings["TemplatesPath"].Value = dlgOptions.TemplatePath;
+        configurationFile.AppSettings.Settings["ProjectsPath"].Value = dlgOptions.ProjectPath;
+        configurationFile.Save(ConfigurationSaveMode.Full);
+        }
+      }
+
     public void About()
       {
         DlgAbout dlgAbout;

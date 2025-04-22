@@ -91,6 +91,15 @@ namespace VisualVisioSVGLight
       {
       switch (control.Id)
         {
+        case "btnSVGForm":
+          // Launch SVG form
+          ThisAddIn.addinApplication.DisplaySVGWindow();
+          break;
+        case "btnAbout":
+          // Launch About dialog
+          ThisAddIn.addinApplication.About();
+          break;
+        //backstage
         case "btnProjectNew":
           ThisAddIn.addinApplication.NewFile();
           break;
@@ -102,15 +111,9 @@ namespace VisualVisioSVGLight
           break;
         case "btnProjectClose":
           break;
-        case "btnSVGForm":
-          // Launch SVG form
-          ThisAddIn.addinApplication.DisplaySVGWindow();
+        case "btnBackStageOptionsApplication":
+          ThisAddIn.addinApplication.Options();
           break;
-        case "btnAbout":
-          // Launch About dialog
-          ThisAddIn.addinApplication.About();
-          break;
-          
         }
       }
 

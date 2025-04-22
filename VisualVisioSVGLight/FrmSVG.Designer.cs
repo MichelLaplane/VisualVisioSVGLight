@@ -89,7 +89,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(515, 456);
+      this.ClientSize = new System.Drawing.Size(514, 456);
       this.Controls.Add(this.btnClose);
       this.Controls.Add(this.btnSvgNativeInsert);
       this.Controls.Add(this.btnVisioInsert);

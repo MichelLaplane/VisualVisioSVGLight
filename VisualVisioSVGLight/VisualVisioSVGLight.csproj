@@ -195,6 +195,12 @@
     <Compile Include="DlgAbout.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DlgOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DlgOptions.designer.cs">
+      <DependentUpon>DlgOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -231,6 +237,18 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="DlgOptions.en-US.resx">
+      <DependentUpon>DlgOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DlgOptions.fr-FR.resx">
+      <DependentUpon>DlgOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DlgOptions.fr.resx">
+      <DependentUpon>DlgOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DlgOptions.resx">
+      <DependentUpon>DlgOptions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmSVG.resx">
       <DependentUpon>FrmSVG.cs</DependentUpon>
     </EmbeddedResource>

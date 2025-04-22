@@ -295,7 +295,98 @@ namespace VisualVisioSVGLight
         }
       }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="visShape"></param>
+    /// <param name="bFill"></param>
+    /// <param name="bLine"></param>
+    public static void SetGeometryVisibility(Visio.Shape visShape, bool bFill, bool bLine)
+      {
+      int nbGeometry;
+
+      nbGeometry = visShape.GeometryCount;
+      for (int i = 0; i < nbGeometry; i++)
+        {
+        SetFormulaCell(visShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + i),
+                      (int)Visio.VisRowIndices.visRowFirst, (int)Visio.VisCellIndices.visCompNoFill, (!bFill).ToString());
+        SetFormulaCell(visShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + i),
+                      (int)Visio.VisRowIndices.visRowFirst, (int)Visio.VisCellIndices.visCompNoLine, (!bLine).ToString());
+        }
+      }
+
+    /// <summary>
+    /// Récupération de la formule d'une cellule
+    /// </summary>
+    /// <param name="visCell"></param>
+    /// <param name="strFormula"></param>
+    /// <returns></returns>
+    public static bool GetFormulaUCell(Visio.Cell visCell, out string strFormula)
+      {
+
+      strFormula = visCell.FormulaU;
+      return true;
+      }
+
+    /// <summary>
+    /// Récupération de la formule de la cellule SRC d'une Shape
+    /// </summary>
+    /// <param name="visShape"></param>
+    /// <param name="srcValue"></param>
+    /// <param name="strFormula"></param>
+    /// <returns></returns>
+    public static bool GetFormulaUCell(Visio.Shape visShape, int srcValue, out string strFormula)
+      {
+      Visio.Cell visCell;
+
+      // Section = visioSRCValue[srcValue,0]
+      // Ligne = visioSRCValue[srcValue,1]
+      // Cellule = visioSRCValue[srcValue,2]
+      visCell = visShape.get_CellsSRC((short)VLConstants.visioSRCValue[srcValue, 0],
+                                      (short)VLConstants.visioSRCValue[srcValue, 1],
+                                      (short)VLConstants.visioSRCValue[srcValue, 2]);
+      return GetFormulaUCell(visCell, out strFormula);
+      }
+
+    /// <summary>
+    /// Récupération d'une shape identifiée par son nom
+    /// la page visPage
+    /// </summary>
+    /// <param name="visPage"></param>
+    /// <param name="strName"></param>
+    /// <param name="visShape"></param>
+    /// <returns></returns>
+    public static bool GetVisShape(Visio.Page visPage, string strName, out Visio.Shape visShape)
+      {
+      Visio.Shapes visShapes;
+      bool bFounded = false;
+
+      visShapes = visPage.Shapes;
+      visShape = null;
+      try
+        {
+        foreach (Visio.Shape visCurShape in visShapes)
+          {
+          if (visCurShape.Name == strName)
+            {
+            bFounded = true;
+            visShape = visCurShape;
+            break;
+            }
+          }
+        }
+      catch (Exception except)
+        {
+        visShape = null;
+        return bFounded;
+        }
+      return bFounded;
+      }
+
     }
+
+
+
 
   /// <summary>
   /// Classe des constante de la librairie Visio
