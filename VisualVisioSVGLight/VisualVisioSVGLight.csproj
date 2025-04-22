@@ -264,10 +264,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="App.config" />
-    <None Include="Gabarits\VisualVisioSVGLight.vssx" />
-    <None Include="Modeles\VisualVisioSVGLight.vstx" />
     <None Include="packages.config" />
-    <None Include="Projets\VisualVisioSVGLight.vsdx" />
+    <None Include="Projects\VisualVisioSVGLight.vsdx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -281,6 +279,8 @@
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="Stencils\VisualVisioSVGLight.vssx" />
+    <None Include="Templates\VisualVisioSVGLight.vstx" />
     <None Include="ThisAddIn.Designer.xml">
       <DependentUpon>ThisAddIn.cs</DependentUpon>
     </None>
@@ -335,6 +335,24 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\ConvertSVG.png" />
+    <Content Include="Projects\Svg\Boundingboxes.svg" />
+    <Content Include="Projects\Svg\Circle.svg" />
+    <Content Include="Projects\Svg\Cubic Bezier curve.svg" />
+    <Content Include="Projects\Svg\Ellipses.svg" />
+    <Content Include="Projects\Svg\Elliptical arc curve.svg" />
+    <Content Include="Projects\Svg\Initial coordinate system.svg" />
+    <Content Include="Projects\Svg\Lines.svg" />
+    <Content Include="Projects\Svg\Marker.svg" />
+    <Content Include="Projects\Svg\Painting.svg" />
+    <Content Include="Projects\Svg\Path triangle.svg" />
+    <Content Include="Projects\Svg\Polygon.svg" />
+    <Content Include="Projects\Svg\Polylines.svg" />
+    <Content Include="Projects\Svg\Quadratic Bezier curve.svg" />
+    <Content Include="Projects\Svg\Rectangle yellow.svg" />
+    <Content Include="Projects\Svg\Rectangles.svg" />
+    <Content Include="Projects\Svg\Text.svg" />
+    <Content Include="Projects\VisualVisioSVG.png" />
+    <Content Include="Projects\VisualVisioSVG.svg" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
