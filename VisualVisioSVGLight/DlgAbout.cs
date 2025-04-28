@@ -10,9 +10,7 @@
 //-------------------------------------------------------------------------//
 using System;
 using System.Collections;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -80,8 +78,7 @@ namespace VisualVisioSVGLight
     /// <summary>
     /// 
     /// </summary>
-    public void InitializeModuleName(ArrayList arModuleName, string strParamDocType, string strParamDocVersion,
-                                     string strDataBaseVersion)
+    public void InitializeModuleName(ArrayList arModuleName, string strParamDocType, string strParamDocVersion)
       {
       ArrayList arItems;
       Assembly[] arAssembly;
@@ -104,6 +101,7 @@ namespace VisualVisioSVGLight
           string versionStr = String.Format("{0}.{1}.{2}.{3}",
                                           curAssembyName.Version.Major.ToString(),
                                           curAssembyName.Version.Minor.ToString(),
+                                          curAssembyName.Version.Build.ToString(),
                                             curAssembyName.Version.MajorRevision.ToString(),
                                             curAssembyName.Version.MinorRevision.ToString());
           item.SubItems.Add(versionStr);

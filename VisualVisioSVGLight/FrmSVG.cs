@@ -1,26 +1,11 @@
-﻿using Microsoft.Web.WebView2.Core;
-using Svg;
+﻿using Svg;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Svg;
-using static System.Windows.Forms.AxHost;
 using Visio = Microsoft.Office.Interop.Visio;
-using Microsoft.Office.Interop.Visio;
 using System.Xml.Linq;
-using System.Web.UI.HtmlControls;
-using System.Drawing.Drawing2D;
 using Svg.Transforms;
-using System.Linq.Expressions;
-using System.Data.SqlTypes;
-using System.Web;
 
 namespace VisualVisioSVGLight
   {
@@ -128,8 +113,6 @@ namespace VisualVisioSVGLight
       Microsoft.Office.Interop.Visio.Page visActivePage = visApp.ActivePage;
       if (visActivePage != null)
         {
-        strFullPath = System.IO.Path.Combine(VisualVisioSVGLight.strProjectPath, svgFileName);
-        System.IO.File.WriteAllText(strFullPath, edSVG.Text);
         try
           {
           var svgDocument = SvgDocument.Open(strFullPath);

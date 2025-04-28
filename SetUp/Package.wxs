@@ -1,0 +1,172 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Id="VisualVisioSVGLight.SetUp" Name="VisualVisioSVGLight" Manufacturer="VisualVisioSVGLight" Version="1.0.0.0" ProductCode="51DBF586-8066-4D23-A527-3996DAA9FFA3" UpgradeCode="625EF39A-A5E6-4ECC-A675-4E9C2E5C936F">
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+    <Feature Id="ProductFeature" Title="VisualVisioSVGLight" Description="The complete package." Level="1" Display="expand" ConfigurableDirectory="INSTALLDIR">
+      <ComponentRef Id="VisualVisioSVGLightProgram" />
+
+      <Feature Id="MainProgram" Title="Program" Description="The main executable." Level="1">
+        <ComponentRef Id="VisualVisioSVGLightProgram" />
+        <ComponentRef Id="ProgramMenuDir" />
+        <ComponentRef Id="RegistryEntries" />
+        <ComponentRef Id="Ressources" />
+      </Feature>
+
+      <Feature Id="StencilFeature" Title="Stencils" Description="The stencils of the solution." Level="1">
+        <ComponentRef Id="Stencils" />
+      </Feature>
+
+      <Feature Id="TemplateFeature" Title="Templates" Description="The templates of the solution." Level="1">
+        <ComponentRef Id="Templates" />
+      </Feature>
+
+      <Feature Id="ProjectFeature" Title="Projects" Description="The projects of the solution." Level="1">
+        <ComponentRef Id="Projects" />
+        <ComponentRef Id="ProjectsRem" />
+        <ComponentRef Id="ProjectsRem1" />
+      </Feature>
+    </Feature>
+
+    <Feature Id="SvgFeature" Title="SvgSamples" Description="The Svg samples of the solution." Level="1">
+      <ComponentRef Id="SvgSamples" />
+    </Feature>
+
+    <WixVariable Id="WixUILicenseRtf" Value="ToInstall\Setup files\License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="ToInstall\Bitmap\Pannel.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="ToInstall\Bitmap\DialogBmp1.bmp" />
+
+    <ui:WixUI Id="WixUI_Mondo" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <Icon Id="VisualVisioSVGLight.ico" SourceFile="ToInstall\Icons\VisualVisioSVGLight.ico" />
+    <Property Id="ARPPRODUCTICON" Value="VisualVisioSVGLight.ico" />
+
+
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLDIR" Name="VisualVisioSVGLight">
+        <!--Addin VSTO-->
+        <Component Id="VisualVisioSVGLightProgram" Guid="1213B1D0-D338-4EE0-B849-901232475421">
+          <File Id="VisualVisioSVGLightVSTO" Name="VisualVisioSVGLight.vsto" Source="ToInstall\Application32\VisualVisioSVGLight.vsto" KeyPath="yes">
+            <Shortcut Id="startmenuVisualVisioSVGLight" Directory="ProgramMenuDir" Name="VisualVisioSVGLight" WorkingDirectory="INSTALLDIR" Icon="VisualVisioSVGLight.ico" IconIndex="0" Advertise="yes" />
+            <Shortcut Id="desktopVisualVisioSVGLight" Directory="DesktopFolder" Name="VisualVisioSVGLight" WorkingDirectory="INSTALLDIR" Icon="VisualVisioSVGLight.ico" IconIndex="0" Advertise="yes" />
+          </File>
+          <File Id="VisualVisioSVGLight.dll" Name="VisualVisioSVGLight.dll" Source="ToInstall\Application32\VisualVisioSVGLight.dll" />
+          <!--Addin VisualVisioSVGLight Dynamic Library -->
+          <File Id="VisualVisioSVGLight.dll.manifest" Name="VisualVisioSVGLight.dll.manifest" Source="ToInstall\Application32\VisualVisioSVGLight.dll.manifest" />
+          <!--Addin Office Tools Dynamic Library -->
+          <File Id="Microsoft.Office.Tools.Common.v4.0.Utilities.dll" Name="Microsoft.Office.Tools.Common.v4.0.Utilities.dll" Source="ToInstall\Application32\Microsoft.Office.Tools.Common.v4.0.Utilities.dll" />
+          <File Id="ExCSS.dll" Name="ExCSS.dll" Source="ToInstall\Application32\ExCSS.dll" />
+          <File Id="Svg.dll" Name="Svg.dll" Source="ToInstall\Application32\Svg.dll" />
+          <File Id="System.Buffers.dll" Name="System.Buffers.dll" Source="ToInstall\Application32\System.Buffers.dll" />
+          <File Id="System.Memory.dll" Name="System.Memory.dll" Source="ToInstall\Application32\System.Memory.dll" />
+          <File Id="System.Numerics.Vectors.dll" Name="System.Numerics.Vectors.dll" Source="ToInstall\Application32\System.Numerics.Vectors.dll" />
+          <File Id="System.Runtime.CompilerServices.Unsafe.dll" Name="System.Runtime.CompilerServices.Unsafe.dll" Source="ToInstall\Application32\System.Runtime.CompilerServices.Unsafe.dll" />
+        </Component>
+
+
+        <Directory Id="INSTALLRESSOURCE" Name="en-US">
+          <Component Id="Ressources" Guid="BD24BFDC-DB92-4EC3-8211-B92E6B1D0375">
+            <File Id="VisualVisioSVGLight.resources.dll" Name="VisualVisioSVGLight.resources.dll" Source="ToInstall\Application32\VisualVisioSVGLight.resources.dll" />
+          </Component>
+        </Directory>
+
+        <!--Addin Stencils -->
+        <Directory Id="INSTALLSTENCILS" Name="Stencils">
+          <Component Id="Stencils" Guid="A03EE95B-20DC-4BD3-BDE5-3ECD0A713191">
+            <File Id="VisualVisioSVGLight" Name="VisualVisioSVGLight.vssx" Source="ToInstall\Stencils\VisualVisioSVGLight.vssx" KeyPath="yes" />
+          </Component>
+        </Directory>
+        <!--Addin templates -->
+        <Directory Id="INSTALLTEMPLATES" Name="Templates">
+          <Component Id="Templates" Guid="88D63687-91F8-4099-89CE-64670E47E4C1">
+            <File Id="TemplatesVisualVisioSVGLight" Name="VisualVisioSVGLight.vstx" Source="ToInstall\Templates\VisualVisioSVGLight.vstx" KeyPath="yes" />
+          </Component>
+
+        </Directory>
+
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ProgramMenuDir" Name="VisualVisioSVGLight">
+        <Component Id="ProgramMenuDir" Guid="4739D8D9-14B1-4D43-B379-D6E47E58C286">
+          <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+          <RegistryValue Root="HKCU" Key="Software\VisualVisioSVGLight" Type="string" Value="" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="PersonalFolder">
+      <Directory Id="VisualVisioSVGLightPersonalFolder" Name="VisualVisioSVGLight">
+        <Directory Id="INSTALLDIRPersonalFolder" Name="VisualVisioSVGLight">
+
+          <!--Addin projects -->
+          <Directory Id="INSTALLPROJECTS" Name="Projects">
+            <Component Id="Projects" Guid="D06383CC-ED26-491A-B4B3-6A54E23A02B9">
+              <RegistryValue Root="HKCU" Key="Software\VisualVisioSVGLight" Type="string" Value="" KeyPath="yes" />
+              <File Id="ProjectsVisualVisioSVGLight" Name="VisualVisioSVGLight.vsdx" Source="ToInstall\Projects\VisualVisioSVGLight.vsdx" />
+              <RemoveFolder Id="INSTALLPROJECTS" On="uninstall" />
+            </Component>
+            <Directory Id="INSTALLSVG" Name="SvgSamples">
+              <Component Id="SvgSamples" Guid="E765EDF2-5046-49D5-951A-1695D10B9267">
+                <RegistryValue Root="HKCU" Key="Software\VisualVisioSVGLight" Type="string" Value="" KeyPath="yes" />
+                <File Id="Text.svg" Name="Text.svg" Source="ToInstall\Projects\Svg\Text.svg" />
+                <File Id="Boundingboxes.svg" Name="Boundingboxes.svg" Source="ToInstall\Projects\Svg\Boundingboxes.svg" />
+                <File Id="Circle.svg" Name="Circle.svg" Source="ToInstall\Projects\Svg\Circle.svg" KeyPath='no' />
+                <File Id="Cubic Bezier curve.svg" Name="Cubic Bezier curve.svg" Source="ToInstall\Projects\Svg\Cubic Bezier curve.svg" />
+                <File Id="Ellipses.svg" Name="Ellipses.svg" Source="ToInstall\Projects\Svg\Ellipses.svg" KeyPath='no' />
+                <File Id="Elliptical arc curve.svg" Name="Elliptical arc curve.svg" Source="ToInstall\Projects\Svg\Elliptical arc curve.svg" />
+                <File Id="Initial coordinate system.svg" Name="Initial coordinate system.svg" Source="ToInstall\Projects\Svg\Initial coordinate system.svg" />
+                <File Id="Lines.svg" Name="Lines.svg" Source="ToInstall\Projects\Svg\Lines.svg" />
+                <File Id="Marker.svg" Name="Marker.svg" Source="ToInstall\Projects\Svg\Marker.svg" />
+                <File Id="Painting.svg" Name="Painting.svg" Source="ToInstall\Projects\Svg\Painting.svg" />
+                <File Id="Path triangle.svg" Name="Path triangle.svg" Source="ToInstall\Projects\Svg\Path triangle.svg" />
+                <File Id="Polygon.svg" Name="Polygon.svg" Source="ToInstall\Projects\Svg\Polygon.svg" />
+                <File Id="Polylines.svg" Name="Polylines.svg" Source="ToInstall\Projects\Svg\Polylines.svg" />
+                <File Id="Quadratic Bezier curve.svg" Name="Quadratic Bezier curve.svg" Source="ToInstall\Projects\Svg\Quadratic Bezier curve.svg" />
+                <File Id="Rectangle yellow.svg" Name="Rectangle yellow.svg" Source="ToInstall\Projects\Svg\Rectangle yellow.svg" />
+                <File Id="Rectangles.svg" Name="Rectangles.svg" Source="ToInstall\Projects\Svg\Rectangles.svg" />
+                <RemoveFolder Id="INSTALLSVG" On="uninstall" />
+              </Component>
+            </Directory>
+
+          </Directory>
+          <Component Id="ProjectsRem" Guid="EE43EC27-14B2-4CEB-8030-37AA73EB24CC">
+            <RegistryValue Root="HKCU" Key="Software\VisualVisioSVGLight" Type="string" Value="" KeyPath="yes" />
+            <RemoveFolder Id="VisualVisioSVGLightPersonalFolderRem" On="uninstall" />
+          </Component>
+
+        </Directory>
+
+        <Component Id="ProjectsRem1" Guid="66F4C449-B1C1-4AB1-9504-66C5CA780038">
+          <RegistryValue Root="HKCU" Key="Software\VisualVisioSVGLight" Type="string" Value="" KeyPath="yes" />
+          <RemoveFolder Id="VisualVisioSVGLightPersonalFolder" On="uninstall" />
+        </Component>
+
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Component Id="RegistryEntries" Guid="0C30A2AF-2576-4A65-965C-2F43BAD976AB" Directory="TARGETDIR">
+      <RegistryKey Root="HKCU" Key="Software\Microsoft\Visio\Addins\VisualVisioSVGLight">
+        <RegistryValue Name="Description" Value="VisualVisioSVGLight" Type="string" />
+        <RegistryValue Name="FriendlyName" Value="VisualVisioSVGLight" Type="string" />
+        <RegistryValue Name="LoadBehavior" Value="3" Type="integer" />
+        <RegistryValue Name="Manifest" Value="file:///[INSTALLDIR]VisualVisioSVGLight.vsto|vstolocal" Type="string" />
+      </RegistryKey>
+      <RegistryKey Root="HKCU" Key="Software\VisualVisioSVGLight\Path">
+        <RegistryValue Name="Stencils" Value="[INSTALLDIR]Stencils" Type="string" />
+        <!--<RegistryValue Name='Gabarits' Value='[INSTALLDIR]Gabarits' Type='string' />-->
+        <RegistryValue Name="Templates" Value="[INSTALLDIR]Templates" Type="string" />
+        <!--<RegistryValue Name='Modeles' Value='[INSTALLDIR]Modeles' Type='string' />-->
+        <RegistryValue Name="Projects" Value="[INSTALLDIRPersonalFolder]Projects" Type="string" />
+        <!--<RegistryValue Name='Projets' Value='[INSTALLDIRPersonalFolder]Projets' Type='string' />-->
+      </RegistryKey>
+      <RegistryKey Root="HKCU" Key="Software\VisualVisioSVGLight\Options">
+        <RegistryValue Name="Culture" Value="en-US" Type="string" />
+      </RegistryKey>
+    </Component>
+
+  </Package>
+</Wix>

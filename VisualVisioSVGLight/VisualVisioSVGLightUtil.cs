@@ -1,20 +1,13 @@
-﻿using ExCSS;
-using Microsoft.Office.Interop.Visio;
+﻿using Microsoft.Office.Interop.Visio;
 using Svg;
 using Svg.Pathing;
 using Svg.Transforms;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Xml.Linq;
-using static VisualVisioSVGLight.VLConstants;
 using Visio = Microsoft.Office.Interop.Visio;
 
 namespace VisualVisioSVGLight
