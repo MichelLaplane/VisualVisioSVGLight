@@ -23,15 +23,20 @@ namespace VisualVisioSVGLight
       string strParamFill = "", strParamLocFill = "";
       string strParamOpacity = "", strParamLocOpacity = "";
       string strRounding = "";
-      int iRed = 0, iGreen = 0, iBlue = 0;
       Visio.Shape visShape;
 
       strParamStrokeColor = strStrokeColor;
       strParamFill = strFill;
-      double dblX1 = ((SvgRectangle)element).X + dblTranslateX;
-      double dblY1 = ((SvgRectangle)element).Y + dblTranslateY;
+      double dblX1 = ((SvgRectangle)element).X;
+      double dblY1 = ((SvgRectangle)element).Y;
       double dblX2 = dblX1 + ((SvgRectangle)element).Width;
       double dblY2 = dblY1 + ((SvgRectangle)element).Height;
+      if ((dblX1 == 0.0) && (dblY1 == 0.0) && (dblX2 == 0.0) && (dblY2 == 0.0))
+        return;
+      dblX1 += dblTranslateX;
+      dblY1 += dblTranslateY;
+      dblX2 = dblX1 + ((SvgRectangle)element).Width;
+      dblY2 = dblY1 + ((SvgRectangle)element).Height;
       ((SvgRectangle)element).TryGetAttribute("rx", out strRounding);
       ((SvgRectangle)element).TryGetAttribute("stroke", out strParamLocStrokeColor);
       ((SvgRectangle)element).TryGetAttribute("stroke-width", out strParamLocStrokeWidth);
@@ -572,7 +577,7 @@ namespace VisualVisioSVGLight
       ApplyShapeStyles(visPage, visShape, strParamStrokeWidth, "", strParamStrokeColor, strParamFill, strParamOpacity, dblWidthRatio);
       }
 
-    public static void Create2DPolylineFromPath(Visio.Page visPage, Visio.Shape visSVGShape, SvgElement element, string styleContent, double dblWidthRatio, double dblHeightRatio,
+    public static Visio.Shape Create2DPolylineFromPath(Visio.Page visPage, Visio.Shape visSVGShape, SvgElement element, string styleContent, double dblWidthRatio, double dblHeightRatio,
                                   double dblSVGWidth, double dblSVGHeight, bool bHide)
       {
       double dblBeginX = 0.0, dblBeginY = 0.0;
@@ -580,11 +585,13 @@ namespace VisualVisioSVGLight
       double dblPathOriginX = 0.0, dblPathOriginY = 0.0;
       double dblRelOriginX = 0.0, dblRelOriginY = 0.0;
       double dblArcRelOriginX = 0, dblArcRelOriginY = 0;
-      Visio.Shape visPathShape=null;
+      Visio.Shape visPathShape = null;
       string strStrokeColor, strStrokeWidth, strFill, strOpacity;
       string strStartMarker = "", strMidMarker = "", strEndMarker = "";
       Visio.Shape visStartMarkerShape = null, visMidMarkerShape = null, visEndMarkerShape = null;
-      string strStyleFill = "", strStyleStrokeWidth="", strStyleMarker = "";
+      string strStyleFill = "", strStyleStrokeWidth = "", strStyleMarker = "";
+      double dblVerticalLineDetection = 0.0;
+      bool bVerticalLineDetection = true;
 
       using (StringReader reader = new StringReader(styleContent))
         {
@@ -600,7 +607,7 @@ namespace VisualVisioSVGLight
             }
           else if (strLine.Contains("fill:") && bPathFound)
             {
-            strStyleFill = strLine.Replace("fill:","");
+            strStyleFill = strLine.Replace("fill:", "");
             strStyleFill = strStyleFill.Replace(";", "");
             strStyleFill = strStyleFill.Trim();
             }
@@ -622,7 +629,13 @@ namespace VisualVisioSVGLight
       ((SvgPath)element).TryGetAttribute("stroke", out strStrokeColor);
       ((SvgPath)element).TryGetAttribute("stroke-width", out strStrokeWidth);
       if (String.IsNullOrEmpty(strStrokeWidth))
+        {
         strStrokeWidth = strStyleStrokeWidth;
+        }
+      else
+        {
+        strStrokeWidth = strStrokeWidth.Replace("px", "");
+        }
       ((SvgPath)element).TryGetAttribute("fill", out strFill);
       if (String.IsNullOrEmpty(strFill))
         strFill = strStyleFill;
@@ -658,6 +671,7 @@ namespace VisualVisioSVGLight
       int iGeometry = 0;
       int iGeometryLine = 0;
       dblOriginX = arData[0].End.X;
+      dblVerticalLineDetection = dblOriginX;
       dblOriginY = arData[0].End.Y;
       dblPathOriginX = arData[0].End.X;
       dblPathOriginY = arData[0].End.Y;
@@ -685,6 +699,8 @@ namespace VisualVisioSVGLight
       double dblCurrentPointX = 0.0, dblCurrentPointY = 0.0;
       double dblReflexionPointX = 0.0, dblReflexionPointY = 0.0;
       int iBeginVertices = 0;
+      bool bMBeginPath = false;
+      bool bNewShapeInPath = false;
       foreach (Svg.Pathing.SvgPathSegment pathSegment in arData)
         {
         string strPoint = pathSegment.ToString();
@@ -696,7 +712,7 @@ namespace VisualVisioSVGLight
               {
               if (bHide)
                 {
-                if(visPathShape != null)
+                if (visPathShape != null)
                   VisualVisioUtil.SetGeometryVisibility(visPathShape, false, false);
                 }
               // Create new PathShape
@@ -706,35 +722,92 @@ namespace VisualVisioSVGLight
               dblOriginY = -visPage.Application.ConvertResult(dblCurrentPointY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
               visPathShape = visPage.DrawRectangle(0, 0, 0, 0);
               bPathZEndFound = false;
+              dblBeginX = pathSegment.End.X;
+              if(dblBeginX == dblVerticalLineDetection)
+                {
+                bVerticalLineDetection &= bVerticalLineDetection;
+                }
+              else
+                {
+                bVerticalLineDetection = false;
+                }
+              dblBeginY = pathSegment.End.Y;
+              dblCurrentPointX = dblBeginX;
+              dblCurrentPointY = dblBeginY;
+              dblBeginX = visPage.Application.ConvertResult(dblBeginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+              dblBeginY = -visPage.Application.ConvertResult(dblBeginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+              if (InsertStartMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, dblWidthRatio, dblHeightRatio, visStartMarkerShape, visMidMarkerShape, visEndMarkerShape, iBeginVertices, iCountBeginVertices,
+                                   dblRelOriginX, dblRelOriginY, bVerticalLineDetection))
+                iBeginVertices++;
               }
             else
               {
-              visPathShape = visPage.DrawRectangle(dblOriginX / dblWidthRatio, dblOriginY / dblHeightRatio, dblOriginX / dblWidthRatio, dblOriginY / dblHeightRatio);
-              // Deleting of all LineTo
-              int nbGeometry = visPathShape.GeometryCount;
-              // Get the count of rows in the current Geometry section. 
-              int nbRows = visPathShape.RowCount[(short)Visio.VisSectionIndices.visSectionFirstComponent];
-
-              for (int iRow = 1; iRow < nbRows - 1; iRow++)
+              if (!bMBeginPath)
                 {
-                visPathShape.DeleteRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (short)(Visio.VisRowIndices.visRowVertex + 1));
+                visPathShape = visPage.DrawRectangle(dblOriginX / dblWidthRatio, dblOriginY / dblHeightRatio, dblOriginX / dblWidthRatio, dblOriginY / dblHeightRatio);
+                // Deleting of all LineTo
+                int nbGeometry = visPathShape.GeometryCount;
+                // Get the count of rows in the current Geometry section. 
+                int nbRows = visPathShape.RowCount[(short)Visio.VisSectionIndices.visSectionFirstComponent];
+
+                for (int iRow = 1; iRow < nbRows - 1; iRow++)
+                  {
+                  visPathShape.DeleteRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (short)(Visio.VisRowIndices.visRowVertex + 1));
+                  }
+                dblBeginX = pathSegment.End.X;
+                if (dblBeginX == dblVerticalLineDetection)
+                  {
+                  bVerticalLineDetection &= bVerticalLineDetection;
+                  }
+                else
+                  {
+                  bVerticalLineDetection = false;
+                  }
+                dblBeginY = pathSegment.End.Y;
+                dblCurrentPointX = dblBeginX;
+                dblCurrentPointY = dblBeginY;
+                dblBeginX = visPage.Application.ConvertResult(dblBeginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+                dblBeginY = -visPage.Application.ConvertResult(dblBeginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+                if (InsertStartMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, dblWidthRatio, dblHeightRatio, visStartMarkerShape, visMidMarkerShape, visEndMarkerShape, iBeginVertices, iCountBeginVertices,
+                                     dblRelOriginX, dblRelOriginY, bVerticalLineDetection))
+                  iBeginVertices++;
+                bMBeginPath = true;
+                }
+              else
+                {
+                // MoveTo
+                if (iGeometryLine > 0)
+                  {
+                  // Create a new geometry line
+                  visPathShape.AddRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (int)Visio.VisRowIndices.visRowLast, (int)Visio.VisRowTags.visTagMoveTo);
+                  }
+                if (pathSegment.End.X == dblVerticalLineDetection)
+                  {
+                  bVerticalLineDetection &= bVerticalLineDetection;
+                  }
+                else
+                  {
+                  bVerticalLineDetection = false;
+                  }
+                dblBeginX = pathSegment.End.X - dblRelOriginX;
+                dblBeginY = pathSegment.End.Y - dblRelOriginY;
+                //dblOriginX = dblBeginX;
+                //dblOriginY = dblBeginY;
+                dblCurrentPointX = pathSegment.End.X;
+                dblCurrentPointY = pathSegment.End.Y;
+                dblBeginX = visPage.Application.ConvertResult(dblBeginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+                dblBeginY = -visPage.Application.ConvertResult(dblBeginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+                //dblOriginX = visPage.Application.ConvertResult(dblOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+                //dblOriginY = -visPage.Application.ConvertResult(dblOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+                VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                              (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visX, dblBeginX / dblWidthRatio);
+                VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                              (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visY, dblBeginY / dblHeightRatio);
+                if (InsertStartMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, dblWidthRatio, dblHeightRatio, visStartMarkerShape, visMidMarkerShape, visEndMarkerShape, iBeginVertices, iCountBeginVertices,
+                                     dblRelOriginX, dblRelOriginY, bVerticalLineDetection))
+                  iBeginVertices++;
                 }
               }
-            // MoveTo
-            if (iGeometryLine > 0)
-              {
-              // Create a new geometry line
-              visPathShape.AddRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (int)Visio.VisRowIndices.visRowLast, (int)Visio.VisRowTags.visTagMoveTo);
-              }
-            dblBeginX = pathSegment.End.X;
-            dblBeginY = pathSegment.End.Y;
-            dblCurrentPointX = dblBeginX;
-            dblCurrentPointY = dblBeginY;
-            dblBeginX = visPage.Application.ConvertResult(dblBeginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-            dblBeginY = -visPage.Application.ConvertResult(dblBeginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-            if (InsertStartMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, visStartMarkerShape, visMidMarkerShape, visEndMarkerShape, iBeginVertices, iCountBeginVertices,
-                                 dblRelOriginX, dblRelOriginY))
-              iBeginVertices++;
             iGeometryLine++;
             break;
           case "m":
@@ -761,6 +834,14 @@ namespace VisualVisioSVGLight
               // Create new PathShape
               iGeometry = 0;
               iGeometryLine = 0;
+              if (pathSegment.End.X == dblVerticalLineDetection)
+                {
+                bVerticalLineDetection &= bVerticalLineDetection;
+                }
+              else
+                {
+                bVerticalLineDetection = false;
+                }
               dblBeginX = dblPathOriginX + pathSegment.End.X;
               dblBeginY = dblPathOriginY + pathSegment.End.Y;
               dblBeginX = visPage.Application.ConvertResult(dblBeginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
@@ -795,35 +876,109 @@ namespace VisualVisioSVGLight
               // Create a new geometry line
               visPathShape.AddRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (int)Visio.VisRowIndices.visRowLast, (int)Visio.VisRowTags.visTagMoveTo);
               }
-            if (InsertStartMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, visStartMarkerShape, visMidMarkerShape, visEndMarkerShape, iBeginVertices, iCountBeginVertices,
-                                 dblBeginX, dblBeginY))
+            if (InsertStartMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, dblWidthRatio, dblHeightRatio, visStartMarkerShape, visMidMarkerShape, visEndMarkerShape, iBeginVertices, iCountBeginVertices,
+                                 dblBeginX, dblBeginY, bVerticalLineDetection))
               iBeginVertices++;
             iGeometryLine++;
             break;
           case "L":
-            // Absolute line
-            if (iGeometryLine > 0)
+            if (!bNewShapeInPath)
               {
+              // Absolute line
+              if (iGeometryLine > 0)
+                {
+                // Create a new geometry line
+                visPathShape.AddRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (int)Visio.VisRowIndices.visRowLast, (int)Visio.VisRowTags.visTagLineTo);
+                }
+              dblBeginX = pathSegment.End.X;
+              if (dblBeginX == dblVerticalLineDetection)
+                {
+                bVerticalLineDetection &= bVerticalLineDetection;
+                }
+              else
+                {
+                bVerticalLineDetection = false;
+                }
+              dblBeginY = pathSegment.End.Y;
+              dblCurrentPointX = dblBeginX;
+              dblCurrentPointY = dblBeginY;
+              dblBeginX = visPage.Application.ConvertResult(dblBeginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+              dblBeginY = -visPage.Application.ConvertResult(dblBeginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                            (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visX, (dblBeginX - dblOriginX) / dblWidthRatio);
+              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                            (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visY, (dblBeginY - dblOriginY) / dblHeightRatio);
+              iGeometryLine++;
+              }
+            else
+              {
+              // Il faut créer une nouvelle forme ligne
+              // Re-centering relative to the SVG shape
+              VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblNewLineSVGPinXValue1);
+              VisualVisioUtil.GetDoubleCellVal(visPathShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblNewLinePinXValue1);
+              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)VLConstants.SRCValue.ID_SRC_PINX, (dblNewLinePinXValue1 + dblNewLineSVGPinXValue1) - (dblSVGWidth * 0.5));
+              VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblNewLineSVGPinYValue1);
+              VisualVisioUtil.GetDoubleCellVal(visPathShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblNewLinePinYValue1);
+              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblNewLinePinYValue1 + dblNewLineSVGPinYValue1) + (dblSVGHeight * 0.5));
+              ApplyShapeStyles(visPage, visPathShape, strStrokeWidth, "", strStrokeColor, strFill, strOpacity, dblWidthRatio);
+              dblBeginX = pathSegment.End.X;
+              if (dblBeginX == dblVerticalLineDetection)
+                {
+                bVerticalLineDetection &= bVerticalLineDetection;
+                }
+              else
+                {
+                bVerticalLineDetection = false;
+                }
+              dblBeginY = pathSegment.End.Y;
+              dblOriginX = dblCurrentPointX;
+              dblOriginY = dblCurrentPointY;
+              dblCurrentPointX = dblBeginX;
+              dblCurrentPointY = dblBeginY;
+              dblBeginX = visPage.Application.ConvertResult(dblBeginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+              dblBeginY = -visPage.Application.ConvertResult(dblBeginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+              //dblOriginX = pathSegment.End.X;
+              //dblOriginY = pathSegment.End.Y;
+              dblOriginX = visPage.Application.ConvertResult(dblOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+              dblOriginY = -visPage.Application.ConvertResult(dblOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+              visPathShape = visPage.DrawRectangle(dblOriginX / dblWidthRatio, dblOriginY / dblHeightRatio, dblOriginX / dblWidthRatio, dblOriginY / dblHeightRatio);
+              // Deleting of all LineTo
+              iGeometryLine = 0;
+              int nbGeometry = visPathShape.GeometryCount;
+              // Get the count of rows in the current Geometry section. 
+              int nbRows = visPathShape.RowCount[(short)Visio.VisSectionIndices.visSectionFirstComponent];
+              for (int iRow = 1; iRow < nbRows - 1; iRow++)
+                {
+                visPathShape.DeleteRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (short)(Visio.VisRowIndices.visRowVertex + 1));
+                }
               // Create a new geometry line
               visPathShape.AddRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (int)Visio.VisRowIndices.visRowLast, (int)Visio.VisRowTags.visTagLineTo);
+              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                            (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visX, (dblBeginX - dblOriginX) / dblWidthRatio);
+              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                            (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visY, (dblBeginY - dblOriginY) / dblHeightRatio);
+
+              //VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+              //              (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visX, dblBeginX / dblWidthRatio);
+              //VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+              //              (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visY, dblBeginY / dblHeightRatio);
+              iGeometryLine++;
               }
-            dblBeginX = pathSegment.End.X;
-            dblBeginY = pathSegment.End.Y;
-            dblCurrentPointX = dblBeginX;
-            dblCurrentPointY = dblBeginY;
-            dblBeginX = visPage.Application.ConvertResult(dblBeginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-            dblBeginY = -visPage.Application.ConvertResult(dblBeginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-            VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
-                          (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visX, (dblBeginX - dblOriginX) / dblWidthRatio);
-            VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
-                          (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visY, (dblBeginY - dblOriginY) / dblHeightRatio);
-            iGeometryLine++; break;
+            break;
           case "l":
             // Rel LineTo
             if (iGeometryLine > 0)
               {
               // Create a new geometry line
               visPathShape.AddRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (int)Visio.VisRowIndices.visRowLast, (int)Visio.VisRowTags.visTagLineTo);
+              }
+            if (pathSegment.End.X == dblVerticalLineDetection)
+              {
+              bVerticalLineDetection &= bVerticalLineDetection;
+              }
+            else
+              {
+              bVerticalLineDetection = false;
               }
             dblBeginX = (dblCurrentPointX - dblRelOriginX) + pathSegment.End.X;
             dblBeginY = (dblCurrentPointY - dblRelOriginY) + pathSegment.End.Y;
@@ -852,6 +1007,14 @@ namespace VisualVisioSVGLight
             dblReflexionPointY = dblSecondControlPointY;
             // End point
             dblCubicEndPointX = ((PointF)pathSegment.End).X;
+            if (dblCubicEndPointX == dblVerticalLineDetection)
+              {
+              bVerticalLineDetection &= bVerticalLineDetection;
+              }
+            else
+              {
+              bVerticalLineDetection = false;
+              }
             dblCubicEndPointY = ((PointF)pathSegment.End).Y;
             dblCurrentPointX = dblCubicEndPointX;
             dblCurrentPointY = dblCubicEndPointY;
@@ -879,7 +1042,6 @@ namespace VisualVisioSVGLight
             arControlPoint[7] = (dblCubicEndPointY) / dblHeightRatio;
             Visio.Shape visShapeBezier = visPage.DrawBezier(arControlPoint, 3, (int)VisDrawSplineFlags.visSpline1D);
             visShapeBezier.UpdateAlignmentBox();
-            visShapeBezier.BoundingBox((int)VisBoundingBoxArgs.visBBoxExtents, out double dblLeft1, out double dblBottom1, out double dblRight1, out double dblTop1);
             // Re-centering relative to the SVG shape
             VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblSVGPinXValue1);
             VisualVisioUtil.GetDoubleCellVal(visShapeBezier, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblPinXValue1);
@@ -888,6 +1050,7 @@ namespace VisualVisioSVGLight
             VisualVisioUtil.GetDoubleCellVal(visShapeBezier, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblPinYValue1);
             VisualVisioUtil.SetDoubleCellVal(visShapeBezier, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblPinYValue1 + dblSVGPinYValue1) + (dblSVGHeight * 0.5));
             ApplyShapeStyles(visPage, visShapeBezier, strStrokeWidth, "", strStrokeColor, strFill, strOpacity, dblWidthRatio);
+            bNewShapeInPath = true;
             bCubicBezier = true;
             break;
           case "c":
@@ -911,6 +1074,14 @@ namespace VisualVisioSVGLight
               dblSmoothSecondControlPointY = ((SvgCubicCurveSegment)pathSegment).SecondControlPoint.Y;
               // End point
               dblSmoothEndPointX = ((PointF)pathSegment.End).X;
+              if (dblSmoothEndPointX == dblVerticalLineDetection)
+                {
+                bVerticalLineDetection &= bVerticalLineDetection;
+                }
+              else
+                {
+                bVerticalLineDetection = false;
+                }
               dblSmoothEndPointY = ((PointF)pathSegment.End).Y;
               dblCurrentPointX = dblSmoothEndPointX;
               dblCurrentPointY = dblSmoothEndPointY;
@@ -958,7 +1129,6 @@ namespace VisualVisioSVGLight
               }
             Visio.Shape visShapeSmoothBezier = visPage.DrawBezier(arSmoothControlPoint, 3, (int)VisDrawSplineFlags.visSpline1D);
             visShapeSmoothBezier.UpdateAlignmentBox();
-            visShapeSmoothBezier.BoundingBox((int)VisBoundingBoxArgs.visBBoxExtents, out double dblSmoothLeft, out double dblSmoothBottom, out double dblSmoothRight, out double dblSmoothTop);
             // Re-centering relative to the SVG shape
             VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblSmoothSVGPinXValue1);
             VisualVisioUtil.GetDoubleCellVal(visShapeSmoothBezier, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblSmoothPinXValue1);
@@ -983,6 +1153,14 @@ namespace VisualVisioSVGLight
             dblReflexionPointY = dblCurrentPointY - dblControlPointY;
             // End point
             double dblEndPointX = ((SvgQuadraticCurveSegment)pathSegment).End.X;
+            if (dblEndPointX == dblVerticalLineDetection)
+              {
+              bVerticalLineDetection &= bVerticalLineDetection;
+              }
+            else
+              {
+              bVerticalLineDetection = false;
+              }
             double dblEndPointY = ((SvgQuadraticCurveSegment)pathSegment).End.Y;
             dblCurrentPointX = dblEndPointX;
             dblCurrentPointY = dblEndPointY;
@@ -1026,6 +1204,14 @@ namespace VisualVisioSVGLight
             double dblSmoothControlPointY = dblCurrentPointY + dblReflexionPointY;
             // End point
             double dblSmoothQuadEndPointX = ((SvgQuadraticCurveSegment)pathSegment).End.X;
+            if (dblSmoothQuadEndPointX == dblVerticalLineDetection)
+              {
+              bVerticalLineDetection &= bVerticalLineDetection;
+              }
+            else
+              {
+              bVerticalLineDetection = false;
+              }
             double dblSmoothQuadEndPointY = ((SvgQuadraticCurveSegment)pathSegment).End.Y;
             dblCurrentPointX = dblCubicEndPointX;
             dblCurrentPointY = dblCubicEndPointY;
@@ -1065,70 +1251,78 @@ namespace VisualVisioSVGLight
             // elliptical arc
             break;
           case "a":
-              double dblEllipticArcControlPointX = 0.0, dblEllipticArcControlPointY = 0.0;
-              double dblEllipticalArcRadiusX = ((SvgArcSegment)pathSegment).RadiusX;
-              double dblEllipticalArcRadiusY = ((SvgArcSegment)pathSegment).RadiusY;
-              double dblAngle = ((SvgArcSegment)pathSegment).Angle;
-              dblAngle = dblAngle * (Math.PI / 180.0);
-              double dblEllipticalArcEndX = dblCurrentPointX + ((SvgArcSegment)pathSegment).End.X;
-              double dblEllipticalArcEndY = dblCurrentPointY + ((SvgArcSegment)pathSegment).End.Y;
-              SvgArcSize arcSize = ((SvgArcSegment)pathSegment).Size;
-              SvgArcSweep arcSweep = ((SvgArcSegment)pathSegment).Sweep;
-              // LineTo
-              if (iGeometryLine > 0)
+            double dblEllipticArcControlPointX = 0.0, dblEllipticArcControlPointY = 0.0;
+            double dblEllipticalArcRadiusX = ((SvgArcSegment)pathSegment).RadiusX;
+            double dblEllipticalArcRadiusY = ((SvgArcSegment)pathSegment).RadiusY;
+            double dblAngle = ((SvgArcSegment)pathSegment).Angle;
+            dblAngle = dblAngle * (Math.PI / 180.0);
+            if (((SvgArcSegment)pathSegment).End.X == dblVerticalLineDetection)
+              {
+              bVerticalLineDetection &= bVerticalLineDetection;
+              }
+            else
+              {
+              bVerticalLineDetection = false;
+              }
+            double dblEllipticalArcEndX = dblCurrentPointX + ((SvgArcSegment)pathSegment).End.X;
+            double dblEllipticalArcEndY = dblCurrentPointY + ((SvgArcSegment)pathSegment).End.Y;
+            SvgArcSize arcSize = ((SvgArcSegment)pathSegment).Size;
+            SvgArcSweep arcSweep = ((SvgArcSegment)pathSegment).Sweep;
+            // LineTo
+            if (iGeometryLine > 0)
+              {
+              // Create a new geometry line
+              visPathShape.AddRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (int)Visio.VisRowIndices.visRowLast, (int)Visio.VisRowTags.visTagEllipticalArcTo);
+              }
+            double dblEllipticArcEndingVertexX = dblEllipticalArcEndX;
+            double dblEllipticArcEndingVertexY = dblEllipticalArcEndY;
+            if (arcSize == SvgArcSize.Large)
+              {
+              // Large arc
+              if (arcSweep == SvgArcSweep.Positive)
                 {
-                // Create a new geometry line
-                visPathShape.AddRow((short)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry), (int)Visio.VisRowIndices.visRowLast, (int)Visio.VisRowTags.visTagEllipticalArcTo);
-                }
-              double dblEllipticArcEndingVertexX = dblEllipticalArcEndX;
-              double dblEllipticArcEndingVertexY = dblEllipticalArcEndY;
-              if (arcSize == SvgArcSize.Large)
-                {
-                // Large arc
-                if (arcSweep == SvgArcSweep.Positive)
-                  {
-                  }
-                else
-                  {
-                  dblEllipticArcControlPointX = dblCurrentPointX + ((SvgArcSegment)pathSegment).RadiusX;
-                  dblEllipticArcControlPointY = dblCurrentPointY + ((SvgArcSegment)pathSegment).RadiusY;
-                  }
                 }
               else
                 {
-                // Small arc
-                if (arcSweep == SvgArcSweep.Positive)
-                  {
-                  dblEllipticArcControlPointX = dblCurrentPointX - ((SvgArcSegment)pathSegment).RadiusX;
-                  dblEllipticArcControlPointY = (dblCurrentPointY - ((SvgArcSegment)pathSegment).RadiusY);
-
-                  }
-                else
-                  {
-                  dblEllipticArcControlPointX = (dblArcRelOriginX - ((SvgArcSegment)pathSegment).RadiusX) - ((SvgArcSegment)pathSegment).RadiusX;
-                  dblEllipticArcControlPointY = -((SvgArcSegment)pathSegment).RadiusY;
-                  }
+                dblEllipticArcControlPointX = dblCurrentPointX + ((SvgArcSegment)pathSegment).RadiusX;
+                dblEllipticArcControlPointY = dblCurrentPointY + ((SvgArcSegment)pathSegment).RadiusY;
                 }
-              dblCurrentPointX = dblEllipticalArcEndX;
-              dblCurrentPointY = dblEllipticalArcEndY;
-              dblArcRelOriginX = 0;
-              dblRelOriginX = 0;
-              dblRelOriginY = 0;
-              double dblEllipticArcAngle = dblAngle;
-              dblEllipticArcEndingVertexX = visPage.Application.ConvertResult(dblEllipticArcEndingVertexX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              dblEllipticArcEndingVertexY = -visPage.Application.ConvertResult(dblEllipticArcEndingVertexY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              dblEllipticArcControlPointX = visPage.Application.ConvertResult(dblEllipticArcControlPointX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              dblEllipticArcControlPointY = -visPage.Application.ConvertResult(dblEllipticArcControlPointY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
-                            (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visX, (dblEllipticArcEndingVertexX) / dblWidthRatio);
-              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
-                            (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visY, (dblEllipticArcEndingVertexY) / dblHeightRatio);
-              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
-                            (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visControlX, (dblEllipticArcControlPointX) / dblWidthRatio);
-              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
-                            (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visControlY, (dblEllipticArcControlPointY) / dblHeightRatio);
-              VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
-                            (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visEccentricityAngle, dblEllipticArcAngle);
+              }
+            else
+              {
+              // Small arc
+              if (arcSweep == SvgArcSweep.Positive)
+                {
+                dblEllipticArcControlPointX = dblCurrentPointX - ((SvgArcSegment)pathSegment).RadiusX;
+                dblEllipticArcControlPointY = (dblCurrentPointY - ((SvgArcSegment)pathSegment).RadiusY);
+
+                }
+              else
+                {
+                dblEllipticArcControlPointX = (dblArcRelOriginX - ((SvgArcSegment)pathSegment).RadiusX) - ((SvgArcSegment)pathSegment).RadiusX;
+                dblEllipticArcControlPointY = -((SvgArcSegment)pathSegment).RadiusY;
+                }
+              }
+            dblCurrentPointX = dblEllipticalArcEndX;
+            dblCurrentPointY = dblEllipticalArcEndY;
+            dblArcRelOriginX = 0;
+            dblRelOriginX = 0;
+            dblRelOriginY = 0;
+            double dblEllipticArcAngle = dblAngle;
+            dblEllipticArcEndingVertexX = visPage.Application.ConvertResult(dblEllipticArcEndingVertexX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+            dblEllipticArcEndingVertexY = -visPage.Application.ConvertResult(dblEllipticArcEndingVertexY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+            dblEllipticArcControlPointX = visPage.Application.ConvertResult(dblEllipticArcControlPointX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+            dblEllipticArcControlPointY = -visPage.Application.ConvertResult(dblEllipticArcControlPointY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+            VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                          (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visX, (dblEllipticArcEndingVertexX) / dblWidthRatio);
+            VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                          (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visY, (dblEllipticArcEndingVertexY) / dblHeightRatio);
+            VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                          (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visControlX, (dblEllipticArcControlPointX) / dblWidthRatio);
+            VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                          (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visControlY, (dblEllipticArcControlPointY) / dblHeightRatio);
+            VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
+                          (int)Visio.VisRowIndices.visRowVertex + iGeometryLine, (int)Visio.VisCellIndices.visEccentricityAngle, dblEllipticArcAngle);
             iGeometryLine++;
             break;
           case "H":
@@ -1147,8 +1341,8 @@ namespace VisualVisioSVGLight
             dblCurrentPointY = dblRelHorizontalY;
             dblRelOriginX = 0.0;
             dblRelOriginY = 0.0;
-            InsertMidMarker(visPage, visSVGShape,strStrokeColor, dblSVGWidth, dblSVGHeight, visMidMarkerShape, iBeginVertices, iCountBeginVertices,
-                                 dblPathOriginX + dblRelHorizontalX, dblPathOriginY + dblRelHorizontalY);
+            InsertMidMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, dblWidthRatio, dblHeightRatio, visMidMarkerShape, iBeginVertices, iCountBeginVertices,
+                                 dblPathOriginX + dblRelHorizontalX, dblPathOriginY + dblRelHorizontalY, bVerticalLineDetection);
             dblRelHorizontalX = visPage.Application.ConvertResult(dblRelHorizontalX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
             dblRelHorizontalY = -visPage.Application.ConvertResult(dblRelHorizontalY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
             VisualVisioUtil.SetDoubleCellVal(visPathShape, (int)(Visio.VisSectionIndices.visSectionFirstComponent + iGeometry),
@@ -1179,8 +1373,9 @@ namespace VisualVisioSVGLight
             //  }
             //InsertMidMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, visMidMarkerShape, iBeginVertices, iCountBeginVertices,
             //                     dblPathOriginX + dblRelVerticalX, dblPathOriginY + dblRelVerticalY);
-            InsertMidMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, visMidMarkerShape, iBeginVertices, iCountBeginVertices,
-                                 dblPathOriginX + dblRelVerticalX + dblCurrentPointX, dblPathOriginY + dblRelVerticalY + dblCurrentPointY);
+            InsertMidMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, dblWidthRatio, dblHeightRatio, visMidMarkerShape, iBeginVertices, iCountBeginVertices,
+                                 dblPathOriginX + dblRelVerticalX + dblCurrentPointX, dblPathOriginY + dblRelVerticalY + dblCurrentPointY,
+                                 bVerticalLineDetection);
             //}
             iGeometryLine++;
             break;
@@ -1200,6 +1395,9 @@ namespace VisualVisioSVGLight
             break;
           }
         }
+      if (InsertEndMarker(visPage, visSVGShape, strStrokeColor, dblSVGWidth, dblSVGHeight, dblWidthRatio, dblHeightRatio, visStartMarkerShape, visMidMarkerShape, visEndMarkerShape, iBeginVertices, iCountBeginVertices,
+                           dblCurrentPointX, dblCurrentPointY, bVerticalLineDetection))
+        iBeginVertices++;
       visPathShape.UpdateAlignmentBox();
       // Re-centering relative to the SVG shape
       VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblSVGPinXValue);
@@ -1213,6 +1411,7 @@ namespace VisualVisioSVGLight
         {
         VisualVisioUtil.SetGeometryVisibility(visPathShape, false, false);
         }
+      return visPathShape;
       }
 
     public static void CreateLine(Visio.Page visPage, Visio.Shape visSVGShape, SvgElement element, string strStrokeColor, string strStrokeWidth, string strFill,
@@ -1503,7 +1702,12 @@ namespace VisualVisioSVGLight
       switch (((SvgMarker)element).Children[0].GetType().Name)
         {
         case "SvgPath":
-          Create2DPolylineFromPath(visPage, visSVGShape, ((SvgMarker)element).Children[0], styleContent, dblWidthRatio, dblHeightRatio, dblSVGWidth, dblSVGHeight, bHide);
+          visMarkerShape = Create2DPolylineFromPath(visPage, visSVGShape, ((SvgMarker)element).Children[0], styleContent, dblWidthRatio, dblHeightRatio, dblSVGWidth, dblSVGHeight, bHide);
+          if (visMarkerShape != null)
+            {
+            visMarkerShape.Name = ((SvgMarker)element).ID;
+            VisualVisioUtil.SetGeometryVisibility(visMarkerShape, false, false);
+            }
           break;
         case "SvgCircle":
           visMarkerShape = CreateCircle(visPage, visSVGShape, ((SvgMarker)element).Children[0], 0.0, 0.0, 0, dblWidthRatio, dblHeightRatio,
@@ -1519,10 +1723,12 @@ namespace VisualVisioSVGLight
 
 
     private static bool InsertStartMarker(Visio.Page visPage, Visio.Shape visSVGShape, string strStrokeColor, double dblSVGWidth, double dblSVGHeight,
-                                           Visio.Shape visStartMarkerShape, Visio.Shape visMidMarkerShape, Visio.Shape visEndMarkerShape,
+                                          double dblWidthRatio, double dblHeightRatio, Visio.Shape visStartMarkerShape, Visio.Shape visMidMarkerShape, Visio.Shape visEndMarkerShape,
                                            int iBeginVertices,
-                                      int iCountBeginVertices, double dblRelOriginX, double dblRelOriginY)
+                                      int iCountBeginVertices, double dblRelOriginX, double dblRelOriginY, bool bVerticalLineDetection)
       {
+      bool bReturn = false;
+
       if (visStartMarkerShape != null)
         {
         if (iBeginVertices == 0)
@@ -1531,8 +1737,10 @@ namespace VisualVisioSVGLight
           VisualVisioUtil.SetGeometryVisibility(visMarker, true, true);
           double dblMarkerOriginX = visPage.Application.ConvertResult(dblRelOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
           double dblMarkerOriginY = -visPage.Application.ConvertResult(dblRelOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX);
-          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY);
+          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX / dblWidthRatio);
+          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY / dblHeightRatio);
+          if (bVerticalLineDetection)
+            VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_ANGLE, (int)Visio.VisUnitCodes.visDegrees, -90);
           // Re-centering relative to the SVG shape
           VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblEndFoundSVGPinXValue);
           VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblEndMarkerPinXValue);
@@ -1540,119 +1748,75 @@ namespace VisualVisioSVGLight
           VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblEndFoundSVGPinYValue);
           VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblEndMarkerPinYValue);
           VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblEndMarkerPinYValue + dblEndFoundSVGPinYValue) + (dblSVGHeight * 0.5));
-          if (visMidMarkerShape != null)
-            {
-            visMarker = visMidMarkerShape.Duplicate();
-            VisualVisioUtil.SetGeometryVisibility(visMarker, true, true);
-            dblMarkerOriginX = visPage.Application.ConvertResult(dblRelOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-            dblMarkerOriginY = -visPage.Application.ConvertResult(dblRelOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-            VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX);
-            VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY);
-            // Re-centering relative to the SVG shape
-            VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidFoundSVGPinXValue);
-            VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidMarkerPinXValue);
-            VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, (dblMidMarkerPinXValue + dblMidFoundSVGPinXValue) - (dblSVGWidth * 0.5));
-            VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidFoundSVGPinYValue);
-            VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidMarkerPinYValue);
-            VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblMidMarkerPinYValue + dblMidFoundSVGPinYValue) + (dblSVGHeight * 0.5));
-            }
           }
-        else
-          {
-          if (iBeginVertices == iCountBeginVertices - 1)
-            {
-            if (visMidMarkerShape != null)
-              {
-              Visio.Shape visMarker = visMidMarkerShape.Duplicate();
-              VisualVisioUtil.SetGeometryVisibility(visMarker, true, true);
-              double dblMarkerOriginX = visPage.Application.ConvertResult(dblRelOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              double dblMarkerOriginY = -visPage.Application.ConvertResult(dblRelOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY);
-              // Re-centering relative to the SVG shape
-              VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidFoundSVGPinXValue);
-              VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidMarkerPinXValue);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, (dblMidMarkerPinXValue + dblMidFoundSVGPinXValue) - (dblSVGWidth * 0.5));
-              VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidFoundSVGPinYValue);
-              VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidMarkerPinYValue);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblMidMarkerPinYValue + dblMidFoundSVGPinYValue) + (dblSVGHeight * 0.5));
-              }
-            if (visEndMarkerShape != null)
-              {
-              Visio.Shape visMarker = visEndMarkerShape.Duplicate();
-              VisualVisioUtil.SetGeometryVisibility(visMarker, true, true);
-              double dblMarkerOriginX = visPage.Application.ConvertResult(dblRelOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              double dblMarkerOriginY = -visPage.Application.ConvertResult(dblRelOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY);
-              // Re-centering relative to the SVG shape
-              VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblEndFoundSVGPinXValue);
-              VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblEndMarkerPinXValue);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, (dblEndMarkerPinXValue + dblEndFoundSVGPinXValue) - (dblSVGWidth * 0.5));
-              VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblEndFoundSVGPinYValue);
-              VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblEndMarkerPinYValue);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblEndMarkerPinYValue + dblEndFoundSVGPinYValue) + (dblSVGHeight * 0.5));
-              }
-            }
-          else
-            {
-            if (visMidMarkerShape != null)
-              {
-              Visio.Shape visMarker = visMidMarkerShape.Duplicate();
-              VisualVisioUtil.SetGeometryVisibility(visMarker, true, true);
-              double dblMarkerOriginX = visPage.Application.ConvertResult(dblRelOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              double dblMarkerOriginY = -visPage.Application.ConvertResult(dblRelOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY);
-              // Re-centering relative to the SVG shape
-              VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidFoundSVGPinXValue);
-              VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidMarkerPinXValue);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, (dblMidMarkerPinXValue + dblMidFoundSVGPinXValue) - (dblSVGWidth * 0.5));
-              VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidFoundSVGPinYValue);
-              VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidMarkerPinYValue);
-              VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblMidMarkerPinYValue + dblMidFoundSVGPinYValue) + (dblSVGHeight * 0.5));
-              }
-            }
-          }
-        return true;
+        bReturn = true;
         }
-      else
+      if (visMidMarkerShape != null)
         {
-        if (visMidMarkerShape != null)
-          {
-          Visio.Shape visMarker = visMidMarkerShape.Duplicate();
-          if (strStrokeColor != "")
-            ApplyShapeStyles(visPage, visMarker, "", "", strStrokeColor, "", "", 1.0);
-          VisualVisioUtil.SetGeometryVisibility(visMarker, true, true);
-          double dblMarkerOriginX = visPage.Application.ConvertResult(dblRelOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-          double dblMarkerOriginY = -visPage.Application.ConvertResult(dblRelOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX);
-          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY);
-          // Re-centering relative to the SVG shape
-          VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidFoundSVGPinXValue);
-          VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidMarkerPinXValue);
-          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, (dblMidMarkerPinXValue + dblMidFoundSVGPinXValue) - (dblSVGWidth * 0.5));
-          VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidFoundSVGPinYValue);
-          VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidMarkerPinYValue);
-          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblMidMarkerPinYValue + dblMidFoundSVGPinYValue) + (dblSVGHeight * 0.5));
-          }
-        return false;
+        Visio.Shape visMarker = visMidMarkerShape.Duplicate();
+        if (strStrokeColor != "")
+          ApplyShapeStyles(visPage, visMarker, "", "", strStrokeColor, "", "", 1.0);
+        VisualVisioUtil.SetGeometryVisibility(visMarker, true, true);
+        double dblMarkerOriginX = visPage.Application.ConvertResult(dblRelOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+        double dblMarkerOriginY = -visPage.Application.ConvertResult(dblRelOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY);
+        // Re-centering relative to the SVG shape
+        VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidFoundSVGPinXValue);
+        VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidMarkerPinXValue);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, (dblMidMarkerPinXValue + dblMidFoundSVGPinXValue) - (dblSVGWidth * 0.5));
+        VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidFoundSVGPinYValue);
+        VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblMidMarkerPinYValue);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblMidMarkerPinYValue + dblMidFoundSVGPinYValue) + (dblSVGHeight * 0.5));
         }
+      return bReturn;
       }
 
-    private static void InsertMidMarker(Visio.Page visPage, Visio.Shape visSVGShape,string strStrokeColor, double dblSVGWidth, double dblSVGHeight, Visio.Shape visMidMarkerShape, int iBeginVertices,
-                                      int iCountBeginVertices, double dblCoordX, double dblCoordY)
+    private static bool InsertEndMarker(Visio.Page visPage, Visio.Shape visSVGShape, string strStrokeColor, double dblSVGWidth, double dblSVGHeight,
+                                        double dblWidthRatio, double dblHeightRatio, Visio.Shape visStartMarkerShape, Visio.Shape visMidMarkerShape, 
+                                        Visio.Shape visEndMarkerShape,int iBeginVertices, int iCountBeginVertices,
+                                        double dblRelOriginX, double dblRelOriginY, bool bVerticalLineDetection)
+      {
+      bool bReturn = false;
+
+      if (visEndMarkerShape != null)
+        {
+        Visio.Shape visMarker = visEndMarkerShape.Duplicate();
+        VisualVisioUtil.SetGeometryVisibility(visMarker, true, true);
+        double dblMarkerOriginX = visPage.Application.ConvertResult(dblRelOriginX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+        double dblMarkerOriginY = -visPage.Application.ConvertResult(dblRelOriginY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX / dblWidthRatio);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY / dblHeightRatio);
+        if(bVerticalLineDetection)
+          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_ANGLE, (int)Visio.VisUnitCodes.visDegrees, -90);
+        // Re-centering relative to the SVG shape
+        VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblEndFoundSVGPinXValue);
+        VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblEndMarkerPinXValue);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, (dblEndMarkerPinXValue + dblEndFoundSVGPinXValue) - (dblSVGWidth * 0.5));
+        VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblEndFoundSVGPinYValue);
+        VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, out double dblEndMarkerPinYValue);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, (dblEndMarkerPinYValue + dblEndFoundSVGPinYValue) + (dblSVGHeight * 0.5));
+        bReturn = true;
+        }
+      return bReturn;
+      }
+
+    private static void InsertMidMarker(Visio.Page visPage, Visio.Shape visSVGShape, string strStrokeColor, double dblSVGWidth, double dblSVGHeight,
+                                        double dblWidthRatio, double dblHeightRatio, Visio.Shape visMidMarkerShape, int iBeginVertices,
+                                      int iCountBeginVertices, double dblCoordX, double dblCoordY, bool bVerticalLineDetection)
       {
       if (visMidMarkerShape != null)
         {
         Visio.Shape visMarker = visMidMarkerShape.Duplicate();
-        if(strStrokeColor != "")
+        if (strStrokeColor != "")
           ApplyShapeStyles(visPage, visMarker, "", "", strStrokeColor, "", "", 1.0);
         VisualVisioUtil.SetGeometryVisibility(visMarker, true, true);
         double dblMarkerOriginX = visPage.Application.ConvertResult(dblCoordX, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
         double dblMarkerOriginY = -visPage.Application.ConvertResult(dblCoordY, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches);
-        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX);
-        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, dblMarkerOriginX / dblWidthRatio);
+        VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINY, dblMarkerOriginY / dblHeightRatio);
+        if (bVerticalLineDetection)
+          VisualVisioUtil.SetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_ANGLE, (int)Visio.VisUnitCodes.visDegrees, -90);
         // Re-centering relative to the SVG shape
         VisualVisioUtil.GetDoubleCellVal(visSVGShape, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidFoundSVGPinXValue);
         VisualVisioUtil.GetDoubleCellVal(visMarker, (int)VLConstants.SRCValue.ID_SRC_PINX, out double dblMidMarkerPinXValue);

@@ -1,6 +1,5 @@
-// About.cs
-// Librairie UtilAsm
-// Copyright © ShareVisual Michel LAPLANE
+// DlgAbout.cs
+// Copyright © Michel LAPLANE
 // All rights reserved.
 
 //-------------------------------------------------------------------------//
@@ -123,7 +122,6 @@ namespace VisualVisioSVGLight
       try
         {
         // Récupération des modules
-        //        ArrayList arItems = new ArrayList();
         Process tempProcess = Process.GetCurrentProcess();
         foreach (ProcessModule module in Process.GetCurrentProcess().Modules)
           {
@@ -148,12 +146,6 @@ namespace VisualVisioSVGLight
             {
             }
           lvVersionInfo.Items.Add(item);
-          //// Rajout des modules
-          //if (arModuleName.Contains(module.ModuleName.ToUpper()))
-          //  {
-          //  arItems.Add(item);
-          //  }
-
           }
         // Remise en forme de la liste pour mettre les modules de l'application
         // en tête de liste

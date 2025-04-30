@@ -264,74 +264,74 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="VisualVisioSVGLight.dll" size="351744">
-      <assemblyIdentity name="VisualVisioSVGLight" version="1.1.4.0" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="VisualVisioSVGLight.dll" size="352768">
+      <assemblyIdentity name="VisualVisioSVGLight" version="1.1.5.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>bydt5f57RsjyymfApYO3dGrlZtKNp/03aZ4p3v3iC2c=</dsig:DigestValue>
+        <dsig:DigestValue>2lvuPEswuacV9+m/EuyyEFY3hjXU3LWk0DaiGF3RRwY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="aa\VisualVisioSVGLight.resources.dll" size="57856">
-      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.4.0" language="aa" processorArchitecture="msil" />
+      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.5.0" language="aa" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>o81b00V8TLhYlusmhZqokNlw5FDo84wYO5/OYcZfNUM=</dsig:DigestValue>
+        <dsig:DigestValue>uN1voIAAnlPLzwdvUH7oIy3zDQ2AL1+X7b03fm5KhZ8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="en-UM\VisualVisioSVGLight.resources.dll" size="57856">
-      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.4.0" language="en-UM" processorArchitecture="msil" />
+      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.5.0" language="en-UM" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>tz21Tyv0O6P3OVuECUdOJXEZ2xxN+wrMM8xgdvWF/Zg=</dsig:DigestValue>
+        <dsig:DigestValue>JxTElUlZDn9N+lbaT5xPpj/mV9DLMC6HXkGK/loU8So=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="en-US\VisualVisioSVGLight.resources.dll" size="210432">
-      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.4.0" language="en-US" processorArchitecture="msil" />
+      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.5.0" language="en-US" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>d5NS5v0pXzCdqxSCTM63c3zGGxF1y1yDjjdlk/mv+eA=</dsig:DigestValue>
+        <dsig:DigestValue>/gbOd4KRvnNInsZngRsTWGKc8fnwTPSQ2tZ9EVbnUrY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="fr\VisualVisioSVGLight.resources.dll" size="112128">
-      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.4.0" language="fr" processorArchitecture="msil" />
+      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.5.0" language="fr" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>dm0B9kXEL1HalQfvASddpHeQkznrmu4cpUbMKm4xqIg=</dsig:DigestValue>
+        <dsig:DigestValue>rnc9lHmP5RZucPTlfsmhiP0ivLuGBduX1cOEQlGzdmY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="fr-FR\VisualVisioSVGLight.resources.dll" size="161792">
-      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.4.0" language="fr-FR" processorArchitecture="msil" />
+      <assemblyIdentity name="VisualVisioSVGLight.resources" version="1.1.5.0" language="fr-FR" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>P1ZP/pQ7gUVdbhFFA0ZUYZNtTmqjg5G6CzMY52vAhBs=</dsig:DigestValue>
+        <dsig:DigestValue>0CdhdkIKDn3h+2N2hIXDmQb52fKsDDUM56bIUNy5png=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -342,6 +342,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>fbm7sIYRSwd9UehrLWsMGpA1opHuCY6ucooY1IsuPRI=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Installer\en-US\cab1.cab" size="860863">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>dCDZDz6Q83V0XbuyuFBxMTdfQLbbb4D4jp5+BrVgaWc=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Projects\Svg\Boundingboxes.svg" size="508">
@@ -488,22 +497,22 @@
       <dsig:DigestValue>V/xlLtZXmNxJWo2U6ZoITHgiqDnil4K7togsJHsTtL4=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Projects\VisualVisioSVG.png" size="5555">
+  <file name="Projects\VisualVisioSVG.png" size="482">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>4S5n1qxA+zY6kUjnpaLU18lqmpGcJs38edoubIa8+1s=</dsig:DigestValue>
+      <dsig:DigestValue>yIRaXdpXmhVBjwtAXeGmJr9GoZMGNy7ijv0IhzIH+xw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Projects\VisualVisioSVG.svg" size="492">
+  <file name="Projects\VisualVisioSVG.svg" size="14037">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>eCBHQYgzduVkLldVrny0QdGTSZ3PYgeQVeNIaBIBmrA=</dsig:DigestValue>
+      <dsig:DigestValue>+Sk0SQNBOU5mP00vymFQK24x4x4f8nUua+t41kl3Cws=</dsig:DigestValue>
     </hash>
   </file>
   <file name="VisualVisioSVGLight.dll.config" size="1343">
@@ -519,7 +528,7 @@
     <vstav3:entryPointsCollection>
       <vstav3:entryPoints>
         <vstav3:entryPoint class="VisualVisioSVGLight.ThisAddIn">
-          <assemblyIdentity name="VisualVisioSVGLight" version="1.1.4.0" language="neutral" processorArchitecture="msil" />
+          <assemblyIdentity name="VisualVisioSVGLight" version="1.1.5.0" language="neutral" processorArchitecture="msil" />
         </vstav3:entryPoint>
       </vstav3:entryPoints>
     </vstav3:entryPointsCollection>
@@ -538,4 +547,4 @@
       </vstov4:customizations>
     </vstav3:application>
   </vstav3:addIn>
-<publisherIdentity name="CN=SURBOK001\Michel" issuerKeyHash="fef0a7331ead4e76023a7840be7cf4c11ed1e411" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>U8XcVI0S6CKlTb782OFiktRdmk0=</DigestValue></Reference></SignedInfo><SignatureValue>Ke7Y+iXuPaHgZx9GslFTimCMH/8zNRA7DyAG4rio3TETBDV3veOVae6RbdQbT9tfj3Mz0DlDYl1l+3uS8dYyErVp01CJNc/VqcLrDKfvEPQ18O9ZQzxcfFNsiCbVj9TTUbkk07yLolbiqQpiNoZb+EnIYB75e13ldErvgeJECJA=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>wNqtajnTHb4wt5N917j4X2MayDeTLK7qnMCnM03kBlj0CT+2VS30OyjCA/AR/Xwd3ucYwX78bvyGmMZaPZVdCqgRMNCbmOBH5CVwIMr1eeArgKHEatMAWAvLLWGCgSnwvpZALqgQUkBRW5xu4Qgh0EW+ruWvxTbcAzh1yROOWrk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="4d9a5dd49262e1d8fcbe4da522e8128d54dcc553" Description="" Url=""><as:assemblyIdentity name="VisualVisioSVGLight.dll" version="1.0.0.0" publicKeyToken="11f77297da6e1116" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=SURBOK001\Michel</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>iWwq3CcQKj8PDrMDiGaNXIqxpPo=</DigestValue></Reference></SignedInfo><SignatureValue>VDBhiBx4Qjm/Obw0yXHUD4OJthCBzLsHpZ4HB5k2AtevRpMneh681kPR7gQi9HwzlPOBVscZXCRNFAFCyjyfAlTH2ezuhrSWHxQO1rFp7+IE2Bc6aZiqAIZNdTtqTNQXP1yhQ5Tdj4rTZ/435hauX46zNe6CR84qMO8d7IJOx7E=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>wNqtajnTHb4wt5N917j4X2MayDeTLK7qnMCnM03kBlj0CT+2VS30OyjCA/AR/Xwd3ucYwX78bvyGmMZaPZVdCqgRMNCbmOBH5CVwIMr1eeArgKHEatMAWAvLLWGCgSnwvpZALqgQUkBRW5xu4Qgh0EW+ruWvxTbcAzh1yROOWrk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB2TCCAUKgAwIBAgIQI+XSYtfkEIlBavpDFrQhFDANBgkqhkiG9w0BAQUFADArMSkwJwYDVQQDHiAAUwBVAFIAQgBPAEsAMAAwADEAXABNAGkAYwBoAGUAbDAeFw0xNzAxMTkyMDA4NDBaFw0xODAxMjAwMjA4NDBaMCsxKTAnBgNVBAMeIABTAFUAUgBCAE8ASwAwADAAMQBcAE0AaQBjAGgAZQBsMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDA2q1qOdMdvjC3k33XuPhfYxrIN5MsruqcwKczTeQGWPQJP7ZVLfQ7KMID8BH9fB3e5xjBfvxu/IaYxlo9lV0KqBEw0JuY4EfkJXAgyvV54CuAocRq0wBYC8stYYKBKfC+lkAuqBBSQFFbnG7hCCHQRb6u5a/FNtwDOHXJE45auQIDAQABMA0GCSqGSIb3DQEBBQUAA4GBADOv2Wg6D15AyQ4TNtigzIY8KuFk3JnUXokjD2eXwTwts49QJqOPCyD00Y2QLqMC6bwP12Pecq0xHVRc8qTX78O7PFA3feqrFPX2mZgOad4ARYAQan65+M//vfbbLZLruW0UIxPsf9f2qBU0tmIk1IB28QCBwzvdhwreTw9UTyby</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>
+<publisherIdentity name="CN=SURBOK001\Michel" issuerKeyHash="fef0a7331ead4e76023a7840be7cf4c11ed1e411" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>gAGVUPRX9zeW/ieAniphzeo4vF8=</DigestValue></Reference></SignedInfo><SignatureValue>L95ad+BG7GHy74sC/SGRF5A0i2cvytqeNZXLzAeFX7yrXjfueb3G+ywNO1OylLWYQdMc4xaFOTZV0wwaUkpg4u/2nEscY3dNcNjWs/8A+kZnehi5X+Hd/IIQYHKqHFP1vnrrdg4J7h8fM/mdgBCcK/6qnvJsFZFEmO3jLZftIH0=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>wNqtajnTHb4wt5N917j4X2MayDeTLK7qnMCnM03kBlj0CT+2VS30OyjCA/AR/Xwd3ucYwX78bvyGmMZaPZVdCqgRMNCbmOBH5CVwIMr1eeArgKHEatMAWAvLLWGCgSnwvpZALqgQUkBRW5xu4Qgh0EW+ruWvxTbcAzh1yROOWrk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="5fbc38eacd612a9e8027fe9637f757f450950180" Description="" Url=""><as:assemblyIdentity name="VisualVisioSVGLight.dll" version="1.0.0.0" publicKeyToken="11f77297da6e1116" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=SURBOK001\Michel</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>RBWkgJtzwckLxRPzGHqZJAJbfpc=</DigestValue></Reference></SignedInfo><SignatureValue>gobGqZwPuUQysuuSvvrXlreeGc38KaJzcHPxN30q9d+n7OSU0Yq35me6ndE4EVrbA5X1n+oThLWXbxukBut9sksZ98/40nqxfkBPkr6XeKCYNMfA+levoFN5Iodz+x40zUx6IGo3/dNmyI5bhiCwFE5ja8Hn5boqEJckliZNidw=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>wNqtajnTHb4wt5N917j4X2MayDeTLK7qnMCnM03kBlj0CT+2VS30OyjCA/AR/Xwd3ucYwX78bvyGmMZaPZVdCqgRMNCbmOBH5CVwIMr1eeArgKHEatMAWAvLLWGCgSnwvpZALqgQUkBRW5xu4Qgh0EW+ruWvxTbcAzh1yROOWrk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB2TCCAUKgAwIBAgIQI+XSYtfkEIlBavpDFrQhFDANBgkqhkiG9w0BAQUFADArMSkwJwYDVQQDHiAAUwBVAFIAQgBPAEsAMAAwADEAXABNAGkAYwBoAGUAbDAeFw0xNzAxMTkyMDA4NDBaFw0xODAxMjAwMjA4NDBaMCsxKTAnBgNVBAMeIABTAFUAUgBCAE8ASwAwADAAMQBcAE0AaQBjAGgAZQBsMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDA2q1qOdMdvjC3k33XuPhfYxrIN5MsruqcwKczTeQGWPQJP7ZVLfQ7KMID8BH9fB3e5xjBfvxu/IaYxlo9lV0KqBEw0JuY4EfkJXAgyvV54CuAocRq0wBYC8stYYKBKfC+lkAuqBBSQFFbnG7hCCHQRb6u5a/FNtwDOHXJE45auQIDAQABMA0GCSqGSIb3DQEBBQUAA4GBADOv2Wg6D15AyQ4TNtigzIY8KuFk3JnUXokjD2eXwTwts49QJqOPCyD00Y2QLqMC6bwP12Pecq0xHVRc8qTX78O7PFA3feqrFPX2mZgOad4ARYAQan65+M//vfbbLZLruW0UIxPsf9f2qBU0tmIk1IB28QCBwzvdhwreTw9UTyby</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

@@ -1,6 +1,6 @@
 // VisualVisioSVGLight.cs
 // Librairie VisualVisioSVGLight
-// Copyright © ShareVisual Michel LAPLANE
+// Copyright © Michel LAPLANE
 // All rights reserved.
 
 //-------------------------------------------------------------------------//
@@ -18,23 +18,6 @@ using Microsoft.Win32;
 using Visio = Microsoft.Office.Interop.Visio;
 using System.Configuration;
 
-
-#if STRINGASM
-using StringAsm;
-#endif
-#if UTILASM
-using UtilAsm;
-using UtlMeth = UtilAsm.ULMethods;
-using OLMeth = OfficeAsm.OLMethods;
-#endif
-#if VISIOASM
-using VisioAsm;
-using VisMeth = VisioAsm.VLMethods;
-using VisCst = VisioAsm.VLConstants;
-#endif
-#if DATAASM
-using DataAsm;
-#endif
 
 namespace VisualVisioSVGLight
   {
@@ -62,10 +45,6 @@ namespace VisualVisioSVGLight
     public static string strCulture;
     internal FrmSVG frmSVG = null;
 
-
-#if VISIOASM
-    private AddAdvise documentAdvise = null;
-#endif
     private Microsoft.Office.Interop.Visio.Document visDocument = null;
     private Microsoft.Office.Interop.Visio.Document visStencil = null;
     private bool bNewFile = false;
@@ -79,8 +58,6 @@ namespace VisualVisioSVGLight
     internal static int iLastNewProjectNum;
     public static bool bOpenProjectInProgress;
     public static bool bPropInRefresh;
-
-    private bool bMustSetTitle;
 
     // Reporting
     static internal Visio.Window visWindowReport = null;
@@ -115,14 +92,6 @@ namespace VisualVisioSVGLight
 
     public void ReleaseEvents()
       {
-#if VISIOASM
-      // suppression des évènements
-      if (documentAdvise != null)
-        {
-        documentAdvise.Dispose(true);
-        documentAdvise = null;
-        }
-#endif
       }
 
     /// <summary>
@@ -349,163 +318,5 @@ namespace VisualVisioSVGLight
       dlgAbout.strStencilVersion = strStencilVersion;
       dlgAbout.ShowDialog();
       }
-
-    //public void InitializeModuleName(ArrayList arModuleName, string strParamDocType, string strParamDocVersion,
-    //                                 string strDataBaseVersion)
-    //  {
-    //  ArrayList arItems;
-    //  Assembly[] arAssembly;
-    //  AppDomain currentDomain;
-
-    //  lvVersionInfo.Items.Clear();
-    //  arItems = new ArrayList();
-    //  try
-    //    {
-    //    currentDomain = AppDomain.CurrentDomain;
-    //    arAssembly = currentDomain.GetAssemblies();
-    //    arItems = new ArrayList();
-    //    foreach (Assembly curAssembly in arAssembly)
-    //      {
-    //      AssemblyName curAssembyName;
-
-    //      curAssembyName = curAssembly.GetName();
-    //      ListViewItem item = new ListViewItem();
-    //      item.Text = curAssembyName.Name;
-    //      string versionStr = String.Format("{0}.{1}.{2}.{3}",
-    //                                      curAssembyName.Version.Major.ToString(),
-    //                                      curAssembyName.Version.Minor.ToString(),
-    //                                        curAssembyName.Version.MajorRevision.ToString(),
-    //                                        curAssembyName.Version.MinorRevision.ToString());
-    //      item.SubItems.Add(versionStr);
-    //      // Récupération information de date
-    //      DateTime lastWriteDate = File.GetLastWriteTime(curAssembly.Location);
-    //      string dateStr = lastWriteDate.ToString("g");
-    //      item.SubItems.Add(dateStr);
-    //      lvVersionInfo.Items.Add(item);
-    //      // Rajout des modules
-    //      if (arModuleName.Contains(curAssembyName.Name.ToUpper()))
-    //        {
-    //        arItems.Add(item);
-    //        }
-    //      }
-    //    }
-    //  catch
-    //    {
-    //    }
-    //  lvDocVersionInfo.Items.Clear();
-    //  try
-    //    {
-    //    //if (strDataBaseVersion != "")
-    //    //  this.labDatabaseVersion.Text = String.Format("Base de données version {0}", strDataBaseVersion);
-    //    //else
-    //    this.labDatabaseVersion.Visible = false;
-    //    // Récupération des modules
-    //    //        ArrayList arItems = new ArrayList();
-    //    Process tempProcess = Process.GetCurrentProcess();
-    //    foreach (ProcessModule module in Process.GetCurrentProcess().Modules)
-    //      {
-    //      ListViewItem item = new ListViewItem();
-    //      item.Text = module.ModuleName;
-    //      // Récupération information de version
-    //      try
-    //        {
-    //        FileVersionInfo verInfo = module.FileVersionInfo;
-    //        string versionStr = String.Format("{0}.{1}.{2}.{3}",
-    //                                        verInfo.FileMajorPart,
-    //                                          verInfo.FileMinorPart,
-    //                                          verInfo.FileBuildPart,
-    //                                          verInfo.FilePrivatePart);
-    //        item.SubItems.Add(versionStr);
-    //        // Récupération information de date
-    //        DateTime lastWriteDate = File.GetLastWriteTime(module.FileName);
-    //        string dateStr = lastWriteDate.ToString("g");
-    //        item.SubItems.Add(dateStr);
-    //        }
-    //      catch
-    //        {
-    //        }
-    //      lvVersionInfo.Items.Add(item);
-    //      //// Rajout des modules
-    //      //if (arModuleName.Contains(module.ModuleName.ToUpper()))
-    //      //  {
-    //      //  arItems.Add(item);
-    //      //  }
-
-    //      }
-    //    // Remise en forme de la liste pour mettre les modules de l'application
-    //    // en tête de liste
-    //    for (int i = arItems.Count; i > 0; i--)
-    //      {
-    //      ListViewItem item = (ListViewItem)arItems[i - 1];
-    //      lvVersionInfo.Items.Remove(item);
-    //      lvVersionInfo.Items.Insert(0, item);
-    //      }
-    //    // Récupération version documents ouverts
-    //    foreach (Visio.Document visCurDocument in visApp.Documents)
-    //      {
-    //      Visio.VisDocumentTypes visDocType;
-    //      string strStencilVersion, strTemplateVersion;
-
-    //      visDocType = (Visio.VisDocumentTypes)visCurDocument.Type;
-    //      switch (visDocType)
-    //        {
-    //        case Visio.VisDocumentTypes.visTypeStencil:
-    //          // Lecture version du gabarit
-    //          if (VisMeth.IsDocumentUserCellExist(visCurDocument, strParamDocType, "StandardStencil") ||
-    //              VisMeth.IsDocumentUserCellExist(visCurDocument, "safeprojectnameDocType", "StandardStencil"))
-    //            {
-    //            ListViewItem item = new ListViewItem();
-    //            item.Text = visCurDocument.Name;
-    //            item.SubItems.Add("Stencil");
-    //            try
-    //              {
-    //              VisMeth.GetStringCellUser(visCurDocument, "User." + strParamDocVersion, out strStencilVersion);
-    //              if (strStencilVersion == "")
-    //                {
-    //                VisMeth.GetStringCellUser(visCurDocument, "User." + "safeprojectnameVersion", out strStencilVersion);
-    //                }
-    //              item.SubItems.Add(strStencilVersion);
-    //              lvDocVersionInfo.Items.Add(item);
-    //              }
-    //            catch
-    //              {
-    //              }
-    //            }
-    //          break;
-    //        case Visio.VisDocumentTypes.visTypeDrawing:
-    //          // Lecture version du modèle
-    //          if (VisMeth.IsDocumentUserCellExist(visCurDocument, strParamDocType, "StandardDoc") ||
-    //              VisMeth.IsDocumentUserCellExist(visCurDocument, "safeprojectnameDocType", "StandardDoc"))
-    //            {
-    //            ListViewItem item = new ListViewItem();
-    //            item.Text = visCurDocument.Name;
-    //            item.SubItems.Add("Document");
-    //            try
-    //              {
-    //              VisMeth.GetStringCellUser(visCurDocument, "User." + strParamDocVersion, out strTemplateVersion);
-    //              if (strTemplateVersion == "")
-    //                {
-    //                VisMeth.GetStringCellUser(visCurDocument, "User." + "safeprojectnameVersion", out strTemplateVersion);
-    //                }
-    //              item.SubItems.Add(strTemplateVersion);
-    //              lvDocVersionInfo.Items.Add(item);
-    //              }
-    //            catch
-    //              {
-    //              }
-    //            }
-    //          break;
-    //        default:
-    //          break;
-    //        }
-    //      }
-    //    }
-    //  catch (Exception ex)
-    //    {
-    //    MessageBox.Show(this, ex.ToString(), "Erreur WUtilAsm", MessageBoxButtons.OK, MessageBoxIcon.Error);
-    //    }
-    //  }
-
-
     }
   }

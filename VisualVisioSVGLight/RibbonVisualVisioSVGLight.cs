@@ -1,6 +1,6 @@
 ﻿// RibbonVisualVisioSVGLight.cs
 // Librairie VisualVisioSVGLight
-// Copyright © ShareVisual Michel LAPLANE
+// Copyright © Michel LAPLANE
 // All rights reserved.
 
 //-------------------------------------------------------------------------//

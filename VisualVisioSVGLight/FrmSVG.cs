@@ -118,12 +118,22 @@ namespace VisualVisioSVGLight
           var svgDocument = SvgDocument.Open(strFullPath);
           svgDocument.TryGetAttribute("width", out string strSvgWidth);
           svgDocument.TryGetAttribute("height", out string strSvgHeight);
+          svgDocument.TryGetAttribute("viewBox", out string strViewbox);
+          if (strViewbox == "Svg.SvgViewBox")
+            {
+            bViewBox = true;
+            SvgViewBox svgViewBox = svgDocument.ViewBox;
+            dblViewBoxX = svgViewBox.MinX;
+            dblViewBoxY = svgViewBox.MinY;
+            dblViewBoxWidth = svgViewBox.Width;
+            dblViewBoxHeight = svgViewBox.Height;
+            }
           if (strSvgWidth != null)
             {
             if (strSvgWidth.EndsWith("%"))
               {
-              strSvgWidth = "254px";
-              strWidthUnit = strSvgWidth.Remove(0, (strSvgWidth.Length - 2));
+              strSvgWidth = dblViewBoxWidth.ToString();
+              strWidthUnit = "px";
               }
             else
               {
@@ -134,13 +144,18 @@ namespace VisualVisioSVGLight
             {
             if (strSvgHeight.EndsWith("%"))
               {
-              strSvgHeight = "254px";
-              strHeightUnit = strSvgHeight.Remove(0, (strSvgHeight.Length - 2));
+              strSvgHeight = dblViewBoxHeight.ToString();
+              strHeightUnit = "px";
               }
             else
               {
               strHeightUnit = strSvgHeight.Remove(0, (strSvgHeight.Length - 2));
               }
+            }
+          else
+            {
+            strSvgHeight = dblViewBoxHeight.ToString();
+            strWidthUnit = "px";
             }
           string strSvgUnit = strWidthUnit;
           switch (strWidthUnit)
@@ -196,15 +211,17 @@ namespace VisualVisioSVGLight
           else
             dblHeightRatio = 1;
           //dblHeightRatio = dblWidthRatio;
-          svgDocument.TryGetAttribute("viewBox", out string strViewbox);
-          if (strViewbox == "Svg.SvgViewBox")
-            {
-            bViewBox = true;
-            SvgViewBox svgViewBox = svgDocument.ViewBox;
-            dblViewBoxX = svgViewBox.MinX;
-            dblViewBoxY = svgViewBox.MinY;
-            dblViewBoxWidth = svgViewBox.Width;
-            dblViewBoxHeight = svgViewBox.Height;
+          //svgDocument.TryGetAttribute("viewBox", out string strViewbox);
+          if(bViewBox)
+            { 
+          //if (strViewbox == "Svg.SvgViewBox")
+          //  {
+          //  bViewBox = true;
+          //  SvgViewBox svgViewBox = svgDocument.ViewBox;
+          //  dblViewBoxX = svgViewBox.MinX;
+          //  dblViewBoxY = svgViewBox.MinY;
+          //  dblViewBoxWidth = svgViewBox.Width;
+          //  dblViewBoxHeight = svgViewBox.Height;
             if (dblSVGInchesWidth != 0.0)
               dblWidthRatio = visActivePage.Application.ConvertResult(dblViewBoxWidth, (int)Visio.VisUnitCodes.visPoints, (int)Visio.VisUnitCodes.visInches) / dblSVGInchesWidth;
             else
@@ -282,7 +299,7 @@ namespace VisualVisioSVGLight
                 break;
               case "SvgMarker":
                 SvgMarker svgMarker = ((SvgMarker)element);
-                VisualVisioSVGLightUtil.Create2DPolylineFromMarker(visActivePage, visSVGShape, element, styleContent, dblWidthRatio, dblHeightRatio, dblSVGInchesWidth, dblSVGInchesHeight, false);
+                VisualVisioSVGLightUtil.Create2DPolylineFromMarker(visActivePage, visSVGShape, element, styleContent, dblWidthRatio, dblHeightRatio, dblSVGInchesWidth, dblSVGInchesHeight, true);
                 break;
               case "SvgGroup":
                 ProcessSvgElement(element, styleContent, visActivePage, visSVGShape, dblWidthRatio, dblHeightRatio, dblSVGInchesWidth, dblSVGInchesHeight, strSvgUnit, bViewBox);
@@ -418,7 +435,7 @@ namespace VisualVisioSVGLight
             break;
           case "SvgMarker":
             SvgMarker svgMarker = ((SvgMarker)subElement);
-            VisualVisioSVGLightUtil.Create2DPolylineFromMarker(visActivePage, visSVGShape, subElement, styleContent, dblWidthRatio, dblHeightRatio, dblSVGInchesWidth, dblSVGInchesHeight, false);
+            VisualVisioSVGLightUtil.Create2DPolylineFromMarker(visActivePage, visSVGShape, subElement, styleContent, dblWidthRatio, dblHeightRatio, dblSVGInchesWidth, dblSVGInchesHeight, true);
             break;
           case "SvgForeignObject":
             break;

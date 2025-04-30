@@ -1,6 +1,6 @@
 // DlgOptions.cs
-// Librairie VisualVisioMermaid
-// Copyright © ShareVisual Michel LAPLANE
+// Librairie VisualVisioSVGLight
+// Copyright © Michel LAPLANE
 // All rights reserved.
 
 //-------------------------------------------------------------------------//
